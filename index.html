@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiveDNS VPN Secure Portal</title>
+
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --accent: #009FE3;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --danger: #ef4444;
+  --success: #22c55e;
+}
+
+body {
+  margin:0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(135deg,#0f172a,#111827);
+  color: var(--text);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+.container {
+  width:90%;
+  max-width:700px;
+}
+
+.card {
+  background: var(--card);
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+
+h1 { margin-top:0; }
+
+.info {
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:20px;
+}
+
+.vpn-item {
+  background:#0f172a;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  border-left:4px solid var(--accent);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.status {
+  font-size:13px;
+}
+
+.qr {
+  margin-top:10px;
+}
+
+button {
+  background:var(--accent);
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+  margin-top:15px;
+}
+
+input {
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:10px;
+}
+
+.login-box {
+  background:var(--card);
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 0 40px rgba(0,0,0,0.4);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="login" class="login-box">
+  <h1>🔐 Secure VPN Access</h1>
+  <input type="password" id="password" placeholder="Enter password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="portal" style="display:none;">
+  <div class="card">
+    <h1>LiveDNS VPN Portal</h1>
+
+    <div class="info">
+      Your IP: <span id="ip">Loading...</span><br>
+      Date & Time: <span id="datetime"></span>
+    </div>
+
+    <div id="vpn-list"></div>
+
+    <button onclick="checkAll()">🔄 Refresh Status</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const PASSWORD = "LiveDNS2026";  // <-- поменяй
+
+const vpnServers = [
+  "https://vpn1.livedns.co.il",
+  "https://vpn2.livedns.co.il",
+  "https://vpn3.livedns.co.il"
+];
+
+function login(){
+  const input = document.getElementById("password").value;
+  if(input === PASSWORD){
+    document.getElementById("login").style.display="none";
+    document.getElementById("portal").style.display="block";
+  } else {
+    alert("Wrong password");
+  }
+}
+
+function updateTime(){
+  const now = new Date();
+  document.getElementById("datetime").innerText = now.toLocaleString();
+}
+setInterval(updateTime,1000);
+updateTime();
+
+fetch("https://api.ipify.org?format=json")
+  .then(res=>res.json())
+  .then(data=>{
+    document.getElementById("ip").innerText=data.ip;
+  });
+
+function generateQR(url){
+  return `<img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}">`;
+}
+
+function createVPNList(){
+  const container=document.getElementById("vpn-list");
+  container.innerHTML="";
+  vpnServers.forEach(server=>{
+    const div=document.createElement("div");
+    div.className="vpn-item";
+    div.innerHTML=`
+      <div>
+        <div>${server}</div>
+        ${generateQR(server)}
+      </div>
+      <div class="status" id="status-${server}">Checking...</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+async function checkServer(url){
+  const id="status-"+url;
+  try{
+    const response=await fetch(url,{mode:'no-cors'});
+    document.getElementById(id).innerHTML=
+      `<span style="color:var(--success)">● Online</span>`;
+  } catch{
+    document.getElementById(id).innerHTML=
+      `<span style="color:var(--danger)">● Offline</span>`;
+  }
+}
+
+function checkAll(){
+  vpnServers.forEach(server=>{
+    checkServer(server);
+  });
+}
+
+createVPNList();
+checkAll();
+</script>
+
+</body>
+</html>
