@@ -1,94 +1,99 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiveDNS VPN Secure Portal</title>
+<title>LiveDNS VPN Connection Guide</title>
 
 <style>
 :root {
-  --bg: #0f172a;
-  --card: #1e293b;
-  --accent: #009FE3;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --danger: #ef4444;
-  --success: #22c55e;
+  --bg:#0f172a;
+  --card:#1e293b;
+  --accent:#009FE3;
+  --text:#e2e8f0;
+  --muted:#94a3b8;
 }
 
-body {
+body{
   margin:0;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: Inter, system-ui, sans-serif;
   background: linear-gradient(135deg,#0f172a,#111827);
-  color: var(--text);
+  color:var(--text);
+  padding:40px 20px;
   display:flex;
   justify-content:center;
-  align-items:center;
-  min-height:100vh;
 }
 
-.container {
-  width:90%;
-  max-width:700px;
+.container{
+  width:100%;
+  max-width:1000px;
 }
 
-.card {
-  background: var(--card);
+.card{
+  background:var(--card);
   padding:30px;
-  border-radius:20px;
+  border-radius:18px;
+  margin-bottom:25px;
   box-shadow:0 0 40px rgba(0,0,0,0.4);
 }
 
-h1 { margin-top:0; }
+h1,h2{
+  margin-top:0;
+}
 
-.info {
-  font-size:14px;
+.subtitle{
   color:var(--muted);
   margin-bottom:20px;
 }
 
-.vpn-item {
+.server-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.server-box{
   background:#0f172a;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
+  padding:20px;
+  border-radius:14px;
   border-left:4px solid var(--accent);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
 }
 
-.status {
-  font-size:13px;
-}
-
-.qr {
-  margin-top:10px;
-}
-
-button {
-  background:var(--accent);
-  border:none;
-  padding:10px 16px;
-  border-radius:10px;
-  color:white;
-  cursor:pointer;
-  margin-top:15px;
-}
-
-input {
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:none;
+.server-address{
+  font-family:monospace;
+  font-size:16px;
   margin-bottom:10px;
 }
 
-.login-box {
-  background:var(--card);
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 0 40px rgba(0,0,0,0.4);
+button{
+  background:var(--accent);
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+  font-size:13px;
+  transition:0.3s;
+}
+
+button:hover{
+  opacity:0.85;
+}
+
+ul{
+  padding-left:20px;
+  color:var(--muted);
+}
+
+.step{
+  margin-bottom:12px;
+}
+
+.footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  margin-top:30px;
 }
 </style>
 </head>
@@ -97,102 +102,119 @@ input {
 
 <div class="container">
 
-<div id="login" class="login-box">
-  <h1>🔐 Secure VPN Access</h1>
-  <input type="password" id="password" placeholder="Enter password">
-  <button onclick="login()">Login</button>
-</div>
-
-<div id="portal" style="display:none;">
+  <!-- HEADER -->
   <div class="card">
-    <h1>LiveDNS VPN Portal</h1>
+    <h1>🔐 LiveDNS VPN Connection Guide</h1>
+    <div class="subtitle">
+      Public VPN connection information and remote support tools.
+    </div>
+  </div>
 
-    <div class="info">
-      Your IP: <span id="ip">Loading...</span><br>
-      Date & Time: <span id="datetime"></span>
+  <!-- VPN SERVERS -->
+  <div class="card">
+    <h2>VPN Server Addresses</h2>
+
+    <div class="server-grid">
+
+      <div class="server-box">
+        <div class="server-address">vpn1.livedns.co.il</div>
+        <button onclick="copyText('vpn1.livedns.co.il')">Copy</button>
+      </div>
+
+      <div class="server-box">
+        <div class="server-address">vpn2.livedns.co.il</div>
+        <button onclick="copyText('vpn2.livedns.co.il')">Copy</button>
+      </div>
+
+      <div class="server-box">
+        <div class="server-address">vpn3.livedns.co.il</div>
+        <button onclick="copyText('vpn3.livedns.co.il')">Copy</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONNECTION SETTINGS -->
+  <div class="card">
+    <h2>Connection Settings</h2>
+
+    <ul>
+      <li><strong>VPN Type:</strong> FortiGate SSL-VPN</li>
+      <li><strong>Port:</strong> 443</li>
+      <li><strong>Protocol:</strong> SSL</li>
+      <li><strong>Authentication:</strong> Username + Password</li>
+      <li><strong>Two-Factor Authentication:</strong> Enabled</li>
+      <li><strong>Split Tunnel:</strong> Enabled</li>
+    </ul>
+  </div>
+
+  <!-- SETUP INSTRUCTIONS -->
+  <div class="card">
+    <h2>Setup Instructions (FortiClient)</h2>
+
+    <div class="step">1️⃣ Download and install FortiClient.</div>
+    <div class="step">2️⃣ Open FortiClient → Remote Access → Configure VPN.</div>
+    <div class="step">3️⃣ Choose SSL-VPN.</div>
+    <div class="step">4️⃣ Enter the server address (example: vpn1.livedns.co.il).</div>
+    <div class="step">5️⃣ Enter your username and password.</div>
+    <div class="step">6️⃣ Complete 2FA verification if prompted.</div>
+
+    <br>
+    <button onclick="window.open('https://forticlient.com/downloads','_blank')">
+      Download FortiClient
+    </button>
+  </div>
+
+  <!-- REMOTE SUPPORT TOOLS -->
+  <div class="card">
+    <h2>🖥 Remote Support Tools</h2>
+
+    <div class="subtitle">
+      Free remote access tools for troubleshooting and support.
     </div>
 
-    <div id="vpn-list"></div>
+    <div class="server-grid">
 
-    <button onclick="checkAll()">🔄 Refresh Status</button>
+      <div class="server-box">
+        <div class="server-address">AnyDesk</div>
+        <button onclick="window.open('https://anydesk.com','_blank')">Download</button>
+      </div>
+
+      <div class="server-box">
+        <div class="server-address">TeamViewer</div>
+        <button onclick="window.open('https://teamviewer.com','_blank')">Download</button>
+      </div>
+
+      <div class="server-box">
+        <div class="server-address">RustDesk (Open Source)</div>
+        <button onclick="window.open('https://rustdesk.com','_blank')">Download</button>
+      </div>
+
+      <div class="server-box">
+        <div class="server-address">Chrome Remote Desktop</div>
+        <button onclick="window.open('https://remotedesktop.google.com','_blank')">Open</button>
+      </div>
+
+      <div class="server-box">
+        <div class="server-address">DWService (Open Source)</div>
+        <button onclick="window.open('https://dwservice.net','_blank')">Open</button>
+      </div>
+
+    </div>
   </div>
-</div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    LiveDNS Infrastructure • Secure Remote Access
+  </div>
 
 </div>
 
 <script>
-const PASSWORD = "LiveDNS2026";  // <-- поменяй
-
-const vpnServers = [
-  "https://vpn1.livedns.co.il",
-  "https://vpn2.livedns.co.il",
-  "https://vpn3.livedns.co.il"
-];
-
-function login(){
-  const input = document.getElementById("password").value;
-  if(input === PASSWORD){
-    document.getElementById("login").style.display="none";
-    document.getElementById("portal").style.display="block";
-  } else {
-    alert("Wrong password");
-  }
+function copyText(text){
+  navigator.clipboard.writeText(text);
+  alert("Copied: " + text);
 }
-
-function updateTime(){
-  const now = new Date();
-  document.getElementById("datetime").innerText = now.toLocaleString();
-}
-setInterval(updateTime,1000);
-updateTime();
-
-fetch("https://api.ipify.org?format=json")
-  .then(res=>res.json())
-  .then(data=>{
-    document.getElementById("ip").innerText=data.ip;
-  });
-
-function generateQR(url){
-  return `<img class="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}">`;
-}
-
-function createVPNList(){
-  const container=document.getElementById("vpn-list");
-  container.innerHTML="";
-  vpnServers.forEach(server=>{
-    const div=document.createElement("div");
-    div.className="vpn-item";
-    div.innerHTML=`
-      <div>
-        <div>${server}</div>
-        ${generateQR(server)}
-      </div>
-      <div class="status" id="status-${server}">Checking...</div>
-    `;
-    container.appendChild(div);
-  });
-}
-
-async function checkServer(url){
-  const id="status-"+url;
-  try{
-    const response=await fetch(url,{mode:'no-cors'});
-    document.getElementById(id).innerHTML=
-      `<span style="color:var(--success)">● Online</span>`;
-  } catch{
-    document.getElementById(id).innerHTML=
-      `<span style="color:var(--danger)">● Offline</span>`;
-  }
-}
-
-function checkAll(){
-  vpnServers.forEach(server=>{
-    checkServer(server);
-  });
-}
-
-createVPNList();
-checkAll();
 </script>
 
 </body>
